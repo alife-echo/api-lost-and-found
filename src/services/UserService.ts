@@ -1,6 +1,7 @@
 import { PrismaClient,Prisma} from '@prisma/client';
 import { generateRandomNumber } from "../helpers/generateRandomNumber";
 import { UserCreateInput } from '../types/GlobalTypes';
+import { Jwt } from 'jsonwebtoken';
 
 import bcrypt from 'bcrypt'
 
@@ -17,7 +18,7 @@ export const createUser = async (name:string,email:string,password:string) => {
             name:name,
             email:email,
             password: hash,
-            code: generateRandomNumber(),} // Certifique-se de que essa função existe e retorna uma string.
+            code: generateRandomNumber(),} 
           const newUser = await prisma.user.create({data:user})
           return newUser;
     }
