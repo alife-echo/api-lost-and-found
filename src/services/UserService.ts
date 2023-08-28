@@ -1,20 +1,18 @@
 import { PrismaClient,Prisma} from '@prisma/client';
 import { generateRandomNumber } from "../helpers/generateRandomNumber";
-import { UserCreateInput } from '../types/GlobalTypes';
-import { Jwt } from 'jsonwebtoken';
-
+import { v4 as uuidv4 } from 'uuid';
+import dotenv from 'dotenv'
 import bcrypt from 'bcrypt'
+dotenv.config()
+
 
 const prisma = new PrismaClient()
 
 export const createUser = async (name:string,email:string,password:string) => {
-    const hasUser = await prisma.user.findUnique({where:{email}})
     let user : Prisma.UserCreateInput
-    let id = 0
-    if(!hasUser){
         const hash = bcrypt.hashSync(password,10)
             user = {
-            id:id++,
+            id:uuidv4(),
             name:name,
             email:email,
             password: hash,
@@ -22,13 +20,22 @@ export const createUser = async (name:string,email:string,password:string) => {
           const newUser = await prisma.user.create({data:user})
           return newUser;
     }
-    else{
-        return new Error ('É-mail já existe')
-    }
-}
+
 export const findByEmail = async (email:string) => {
       return await prisma.user.findUnique({where:{email}})
 }
 export const matchPassword = (passwordText:string,encrypted:string)=>{
     return bcrypt.compareSync(passwordText,encrypted)
+}
+export const validatedCode = async(code:string) =>{
+     const user =  await prisma.user.findUnique({where:{code}})
+     if (user) {
+        await prisma.user.update({
+            where: { id: user.id },
+            data: { validated: 1 }
+        });
+       
+    } else {
+        return new Error ('Código não existe')
+    }
 }
