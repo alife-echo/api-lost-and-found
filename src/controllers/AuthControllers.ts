@@ -58,7 +58,19 @@ export const email_confirm = async (req:Request,res:Response) => {
     }
 
 }
+//2bs10
 export const retrieve = async (req:Request,res:Response) =>{
-      
+      if(req.body.email && req.body.password){
+         const newPassword = await UserService.new_password(req.body.email,req.body.password)
+         if(newPassword instanceof Error){
+            res.status(400).json({error:newPassword.message})
+         }
+         else{
+            res.status(400).json({ok:'Senha alterada com sucesso'})
+         }
+      }
+      else{
+        res.json({error:'E-mail e/ou senha não enviados.'})
+      }
 }
 

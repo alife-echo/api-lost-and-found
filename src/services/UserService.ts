@@ -39,3 +39,16 @@ export const validatedCode = async(code:string) =>{
         return new Error ('Código não existe')
     }
 }
+export const new_password = async(email:string,newPassword:string)=>{
+     const hasUser = await findByEmail(email)
+     if(hasUser){
+        const newHash = bcrypt.hashSync(newPassword,10)
+        await prisma.user.update({
+            where: { id: hasUser.id },
+            data: { password: newHash }
+        });
+     }
+     else{
+        return new Error('Usúario não encontrado')
+     }
+}
