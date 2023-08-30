@@ -66,7 +66,7 @@ export const retrieve = async (req:Request,res:Response) =>{
             res.status(400).json({error:newPassword.message})
          }
          else{
-            res.status(400).json({ok:'Senha alterada com sucesso'})
+            res.status(200).json({ok:'Senha alterada com sucesso'})
          }
       }
       else{

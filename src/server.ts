@@ -2,6 +2,7 @@ import path from "path";
 import express,{Request,Response,ErrorRequestHandler} from 'express'
 import dotenv from 'dotenv'
 import AuhtRouter from './routers/AuthRouter'
+import AuthItem from './routers/AuthItem'
 dotenv.config()
 const server = express()
 
@@ -10,6 +11,7 @@ server.set('view engine','mustache')
 server.use(express.urlencoded({extended:true}))
 server.use(express.static(path.join(__dirname,'../public')))
 server.use(AuhtRouter)
+server.use(AuthItem)
 server.use((req:Request,res:Response)=>{
      res.json({error:'pagina não encontrada'}).status(404)
 })

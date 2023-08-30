@@ -1,6 +1,6 @@
 import { Router } from "express";
 import * as AuthController from '../controllers/AuthControllers'
-
+import { Auth } from "../middlewares/Auth";
 const routers = Router()
 
 routers.post('/post-login',AuthController.login)

@@ -1,8 +1,8 @@
-export type UserCreateInput = {
-    id: number
-    name: string
-    email: string
-    password?: string | null
-    validated?: number
-    code: string
-  }
+export interface ItemUploadData {
+  name: string;
+  littleDescription: string;
+  questionsValidated: string;
+  meetingLocation: string;
+  image: string;
+  userId: string;
+}
