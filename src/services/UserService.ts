@@ -13,6 +13,7 @@ export const createUser = async (name:string,email:string,password:string) => {
         const hash = bcrypt.hashSync(password,10)
             user = {
             id:uuidv4(),
+            tokenRetrieve:uuidv4(),
             name:name,
             email:email,
             password: hash,
@@ -39,12 +40,12 @@ export const validatedCode = async(code:string) =>{
         return new Error ('Código não existe')
     }
 }
-export const new_password = async(email:string,newPassword:string)=>{
-     const hasUser = await findByEmail(email)
-     if(hasUser){
+export const new_password = async(tokenRetrieve:string,newPassword:string)=>{
+     const hasTokenUser = await prisma.user.findFirst({where:{tokenRetrieve}})
+     if(hasTokenUser){
         const newHash = bcrypt.hashSync(newPassword,10)
         await prisma.user.update({
-            where: { id: hasUser.id },
+            where: { id: hasTokenUser.id },
             data: { password: newHash }
         });
      }

@@ -15,12 +15,12 @@ export const login = async (req:Request,res:Response) =>{
         console.log(user)
         if(user && UserService.matchPassword(password,user.password) && user.validated === 1) {
             const token = Jwt.sign({id:user.id,email:user.email},process.env.JWT_SECRET_KEY as string,{expiresIn:'1hr'})
-            res.json({ status: true,token });
+            res.status(200).json({ status: true,token });
             return;
         }
     }
 
-    res.json({ status: false });
+    res.status(400).json({ status: false });
 }
 export const register = async (req:Request,res:Response) =>{
     if(req.body.name && req.body.email && req.body.password) {
@@ -50,7 +50,7 @@ export const email_confirm = async (req:Request,res:Response) => {
             res.status(400).json({error:validated.message})
          }
          else{
-            res.status(400).json({ok:'Usúario validado com sucesso'})
+            res.status(200).json({ok:'Usúario validado com sucesso'})
          }
     }
     else{
@@ -59,9 +59,24 @@ export const email_confirm = async (req:Request,res:Response) => {
 
 }
 //2bs10
+export const sendEmailToken = async (req:Request,res:Response) =>{
+    if(req.body.email){
+        const user = await UserService.findByEmail(req.body.email)
+        if(user){
+            sendEmail(user.email,res,'SEU TOKEN PARA ALTERAÇÃO',user.tokenRetrieve,'Alteração de senha')
+            res.status(200).json({ok:'Token enviado com sucesso'})
+        }
+        else{
+            res.status(400).json({error:'Error ao enviar token'})
+        }
+        
+    }else{
+        res.status(400).json({error:'Email não enviado'})
+    }
+}
 export const retrieve = async (req:Request,res:Response) =>{
-      if(req.body.email && req.body.password){
-         const newPassword = await UserService.new_password(req.body.email,req.body.password)
+      if(req.body.token && req.body.password){
+         const newPassword = await UserService.new_password(req.body.token,req.body.password)
          if(newPassword instanceof Error){
             res.status(400).json({error:newPassword.message})
          }
@@ -70,7 +85,7 @@ export const retrieve = async (req:Request,res:Response) =>{
          }
       }
       else{
-        res.json({error:'E-mail e/ou senha não enviados.'})
+        res.status(400).json({error:'Token e/ou senha não enviados.'})
       }
 }
 

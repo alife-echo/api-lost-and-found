@@ -11,7 +11,7 @@ routers.post('/retrieve-post',AuthController.retrieve)
 
 routers.post('/confirm-email-post',AuthController.email_confirm)
 
-
+routers.post('/send-token-post',AuthController.sendEmailToken)
 
 
 export default routers
