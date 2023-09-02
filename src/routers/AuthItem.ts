@@ -1,6 +1,6 @@
 import multer from 'multer'
 import { Router } from 'express'
-import * as AuthItem from '../controllers/ItemsControllers'
+import * as ItemControllers from '../controllers/ItemsControllers'
 
 const routers = Router()
 
@@ -14,6 +14,8 @@ const upload = multer({
        
    })
 
-routers.post('/upload',upload.single('image'),AuthItem.upload)
+routers.get('/list-items',ItemControllers.getListItems)
+   
+routers.post('/upload',upload.single('image'),ItemControllers.upload)
 
 export default routers

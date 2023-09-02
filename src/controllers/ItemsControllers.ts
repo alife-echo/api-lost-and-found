@@ -32,3 +32,8 @@ export const upload = async (req:Request,res:Response)=>{
         res.json({error:'Informe os dados corretamente'})
     }
 }
+
+export const getListItems = async (req:Request,res:Response) =>{
+     const token:string = req.query.token as string
+     res.status(200).json({items:await itemService.getListItem(token)})
+}

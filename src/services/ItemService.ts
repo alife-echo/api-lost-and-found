@@ -3,6 +3,7 @@ import dotenv from 'dotenv'
 import { ItemUploadData } from '../types/GlobalTypes';
 import { areAllPropertiesFilled } from '../helpers/validatedPropertiesUploadItem';
 import { v4 as uuidv4 } from 'uuid';
+import { getUserRef } from '../helpers/getUserRef';
 dotenv.config()
 
 
@@ -28,4 +29,17 @@ export const uploadItem = async (item:ItemUploadData) => {
     else{
         return new Error('Error ao enviar item')
     }
+}
+
+export const getListItem = async (token:string) =>{
+     const userRef =  getUserRef(token,process.env.JWT_SECRET_KEY)
+     const getListItems =  await prisma.item.findMany({where:{
+         userId:{
+            not:{
+                equals:(await userRef).id
+            }
+         }
+     }})
+
+     return getListItems
 }
