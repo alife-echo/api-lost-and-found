@@ -1,5 +1,6 @@
 import multer from 'multer'
 import { Router } from 'express'
+import { Auth } from '../middlewares/Auth'
 import * as ItemControllers from '../controllers/ItemsControllers'
 
 const routers = Router()
@@ -14,8 +15,15 @@ const upload = multer({
        
    })
 
-routers.get('/list-items',ItemControllers.getListItems)
-   
+routers.get('/list-items',Auth.private,ItemControllers.getListItems)
+
 routers.post('/upload',upload.single('image'),ItemControllers.upload)
+
+routers.post('send-response-item',ItemControllers.responseItem)
+
+routers.get('/forum/:id',Auth.private,ItemControllers.getItem)
+
+
+
 
 export default routers

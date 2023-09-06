@@ -4,6 +4,9 @@ import { ItemUploadData } from '../types/GlobalTypes';
 import { areAllPropertiesFilled } from '../helpers/validatedPropertiesUploadItem';
 import { v4 as uuidv4 } from 'uuid';
 import { getUserRef } from '../helpers/getUserRef';
+import { getDateNow } from '../helpers/getDateNow';
+import { getHoursAndMinutesNow } from '../helpers/getHoursAndMinutesNow';
+import { it } from 'node:test';
 dotenv.config()
 
 
@@ -42,4 +45,38 @@ export const getListItem = async (token:string) =>{
      }})
 
      return getListItems
+}
+export const getItemID = async (id:string) => {
+    const item = await prisma.item.findUnique({where:{id}})
+    if(item){
+       return item
+    }
+    else {
+        return new Error('Error ao encontrar item ')
+    }
+
+}
+
+export const sendReponseItem = async (txtResponse:string,token:string,idUser:string) =>{
+    const userRef = await getUserRef(token,process.env.JWT_SECRET_KEY)
+    let responseItemStruct:Prisma.ItemResponseCreateInput
+    responseItemStruct = {
+        id:uuidv4(),
+        textResponse:txtResponse,
+        date:getDateNow(),
+        time:getHoursAndMinutesNow(),
+        user:{
+            connect:{id:userRef.id}
+        },
+        item:{
+            connect:{id:idUser}
+        }
+    }
+    const newResponse =  await prisma.itemResponse.create({data:responseItemStruct})
+    if(newResponse){
+        return newResponse
+    }
+    else{
+        return new Error('Error ao enviar resposta do item')
+    }
 }
