@@ -1,6 +1,7 @@
 import express,{Request,Response} from 'express'
 import * as itemService from '../services/ItemService'
 import { ItemUploadData } from '../types/GlobalTypes';
+import { getUserRef } from '../helpers/getUserRef';
 import fs from 'fs'
 import  Jwt  from 'jsonwebtoken';
 import { Prisma } from '@prisma/client';
@@ -46,13 +47,19 @@ export const getItem = async (req:Request,res:Response) =>{
          res.status(400).json({error:hasItem.message})
      }
      else{
-       res.status(200).json({item:hasItem})
+       res.status(200).json({item:hasItem.item,responses:hasItem.getResponses})
      }
 }
 
 export const responseItem = async (req:Request,res:Response) =>{
-        if(req.body.textResponse){
-
+        if(req.body.textResponse && req.body.token && req.body.idItem){
+            const hasResponseItem = await itemService.sendReponseItem(req.body.textResponse,req.body.token,req.body.idItem)
+            if(hasResponseItem instanceof Error){
+                res.json({error:hasResponseItem.message})
+            }
+            else{
+                res.json({ok:'resposta enviada com sucesso'})
+            }
         }
         else{
             res.json({error:'Informe os dados corretamente'})

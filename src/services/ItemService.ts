@@ -48,8 +48,9 @@ export const getListItem = async (token:string) =>{
 }
 export const getItemID = async (id:string) => {
     const item = await prisma.item.findUnique({where:{id}})
+    const getResponses = await prisma.itemResponse.findMany({where:{itemId:id}})
     if(item){
-       return item
+       return {item,getResponses}
     }
     else {
         return new Error('Error ao encontrar item ')
@@ -57,7 +58,7 @@ export const getItemID = async (id:string) => {
 
 }
 
-export const sendReponseItem = async (txtResponse:string,token:string,idUser:string) =>{
+export const sendReponseItem = async (txtResponse:string,token:string,idItem:string) =>{
     const userRef = await getUserRef(token,process.env.JWT_SECRET_KEY)
     let responseItemStruct:Prisma.ItemResponseCreateInput
     responseItemStruct = {
@@ -69,7 +70,7 @@ export const sendReponseItem = async (txtResponse:string,token:string,idUser:str
             connect:{id:userRef.id}
         },
         item:{
-            connect:{id:idUser}
+            connect:{id:idItem}
         }
     }
     const newResponse =  await prisma.itemResponse.create({data:responseItemStruct})

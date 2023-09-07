@@ -19,7 +19,7 @@ routers.get('/list-items',Auth.private,ItemControllers.getListItems)
 
 routers.post('/upload',upload.single('image'),ItemControllers.upload)
 
-routers.post('send-response-item',ItemControllers.responseItem)
+routers.post('/send-response-item',ItemControllers.responseItem)
 
 routers.get('/forum/:id',Auth.private,ItemControllers.getItem)
 
