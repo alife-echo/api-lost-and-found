@@ -65,3 +65,32 @@ export const responseItem = async (req:Request,res:Response) =>{
             res.json({error:'Informe os dados corretamente'})
         }
 }
+
+export const filterCard = async (req:Request,res:Response)=>{
+      if(req.query.contentInput){
+            const hasCards = await itemService.filterCard(req.query.contentInput as string)
+            if(hasCards instanceof Error){
+                res.status(400).json({error:hasCards.message})
+            }
+            else{
+                res.status(200).json({cards:hasCards})
+            }
+      }
+      else{
+        res.status(400).json({error:'Informe o nome do item'})
+      }
+}
+
+export const getUserLostItems = async(req:Request,res:Response) =>{
+    if(req.params.userId){
+        const hasLostItems = await itemService.listLostItem(req.params.userId)
+        if(hasLostItems instanceof Error){
+             res.status(400).json({error:hasLostItems.message})
+        }
+        else{
+            res.status(400).json({lostItems:hasLostItems})
+        }
+    }else{
+        res.status(400).json({error:'Informe o id do usuario'})
+    }
+}

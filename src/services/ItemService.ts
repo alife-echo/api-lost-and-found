@@ -6,7 +6,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { getUserRef } from '../helpers/getUserRef';
 import { getDateNow } from '../helpers/getDateNow';
 import { getHoursAndMinutesNow } from '../helpers/getHoursAndMinutesNow';
-import { it } from 'node:test';
 dotenv.config()
 
 
@@ -55,7 +54,6 @@ export const getItemID = async (id:string) => {
     else {
         return new Error('Error ao encontrar item ')
     }
-
 }
 
 export const sendReponseItem = async (txtResponse:string,token:string,idItem:string) =>{
@@ -79,5 +77,39 @@ export const sendReponseItem = async (txtResponse:string,token:string,idItem:str
     }
     else{
         return new Error('Error ao enviar resposta do item')
+    }
+}
+
+export const filterCard = async (contentInput: string) => {
+    if (contentInput) {
+        try {
+            const filteredItems = await prisma.item.findMany({
+                where: {
+                    nameItem: {
+                        contains: contentInput
+                    }
+                }
+            });
+            return filteredItems;
+        } catch (error) {
+            return new Error('Erro ao buscar itens');
+        }
+    } else {
+        return new Error('Informe o título do item');
+    }
+};
+
+export const listLostItem = async(userId:string) => {
+    if(userId){
+        const lostItem = await prisma.item.findMany({where:{userId}})
+        if(lostItem){
+            return lostItem
+        }
+        else{
+            return new Error('error ao listar items')
+        }
+    }     
+    else{
+        return new Error('error listagem,informe o id do usuario')
     }
 }
