@@ -27,6 +27,7 @@ routers.get('/userlostItems/:userId',Auth.private,ItemControllers.getUserLostIte
 
 routers.get('/forum/:id',Auth.private,ItemControllers.getItem)
 
+routers.get('/listItemsResponses/:itemId',Auth.private,ItemControllers.listResponsesItemOfUser)
 
 
 export default routers

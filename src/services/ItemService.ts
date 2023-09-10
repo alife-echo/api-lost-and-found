@@ -113,3 +113,19 @@ export const listLostItem = async(userId:string) => {
         return new Error('error listagem,informe o id do usuario')
     }
 }
+
+export const listReponsesOfItem = async(itemId:string) =>{
+     if(itemId){
+        const hasResponseItem = await prisma.itemResponse.findMany({where:{itemId}})
+        const hasUserResponseItem = await prisma.user.findMany({where:{id:hasResponseItem[0].userId}})
+        if(hasResponseItem && hasResponseItem){
+            return {hasResponseItem,hasUserResponseItem}
+        }
+        else{
+            return new Error('error ao listar respostas e usuarios do item')
+        }
+     }
+     else{
+        return new Error('Error, informe o id do item')
+     }
+}
