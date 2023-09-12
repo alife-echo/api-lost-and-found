@@ -33,7 +33,7 @@ export const uploadItem = async (item:ItemUploadData) => {
     }
 }
 
-export const getListItem = async (token:string) =>{
+export const getListItem = async (token:string) =>{ // listar itens na home
      const userRef =  getUserRef(token,process.env.JWT_SECRET_KEY)
      const getListItems =  await prisma.item.findMany({where:{
          userId:{
@@ -45,7 +45,7 @@ export const getListItem = async (token:string) =>{
 
      return getListItems
 }
-export const getItemID = async (id:string) => {
+export const getItemID = async (id:string) => { // mostrar o item no forum
     const item = await prisma.item.findUnique({where:{id}})
     const getResponses = await prisma.itemResponse.findMany({where:{itemId:id}})
     if(item){
@@ -56,7 +56,7 @@ export const getItemID = async (id:string) => {
     }
 }
 
-export const sendReponseItem = async (txtResponse:string,token:string,idItem:string) =>{
+export const sendReponseItem = async (txtResponse:string,token:string,idItem:string) =>{ // responder o item no forum
     const userRef = await getUserRef(token,process.env.JWT_SECRET_KEY)
     let responseItemStruct:Prisma.ItemResponseCreateInput
     responseItemStruct = {
@@ -80,7 +80,7 @@ export const sendReponseItem = async (txtResponse:string,token:string,idItem:str
     }
 }
 
-export const filterCard = async (contentInput: string) => {
+export const filterCard = async (contentInput: string) => { // filtro de pesquisa
     if (contentInput) {
         try {
             const filteredItems = await prisma.item.findMany({
@@ -99,7 +99,7 @@ export const filterCard = async (contentInput: string) => {
     }
 };
 
-export const listLostItem = async(userId:string) => {
+export const listLostItem = async(userId:string) => { // listar itens publicado do usuario
     if(userId){
         const lostItem = await prisma.item.findMany({where:{userId}})
         if(lostItem){
@@ -114,7 +114,7 @@ export const listLostItem = async(userId:string) => {
     }
 }
 
-export const listReponsesOfItem = async(itemId:string) =>{
+export const listReponsesOfItem = async(itemId:string) =>{ // listar respostas daquele item
      if(itemId){
         const hasResponseItem = await prisma.itemResponse.findMany({where:{itemId}})
         const hasUserResponseItem = await prisma.user.findMany({where:{id:hasResponseItem[0].userId}})
@@ -128,4 +128,36 @@ export const listReponsesOfItem = async(itemId:string) =>{
      else{
         return new Error('Error, informe o id do item')
      }
+}
+
+export const  sendMessageUser = async(userId:string) =>{
+    if(userId){
+        const hasReponseItem = await prisma.itemResponse.findFirst({where:{userId}})
+        const hasItem = await prisma.item.findFirst({where:{id:hasReponseItem?.itemId}})
+        const hasUser = await prisma.user.findFirst({where:{id:hasReponseItem?.userId}})
+        if(hasReponseItem && hasItem && hasUser){
+            let messageStruct : Prisma.MessageCreateInput
+            messageStruct = {
+                id:uuidv4(),
+                date:getDateNow(),
+                time:getHoursAndMinutesNow(),
+                meetingLocation:hasItem.meetingLocation,
+                userSend:hasUser.name,
+                user:{
+                    connect:{id:hasReponseItem.userId}
+                },
+            }
+            await prisma.$transaction([
+                prisma.message.create({ data: messageStruct }),
+                prisma.item.delete({ where: { id: hasItem.id } }),
+            ]);
+
+            return 'Mensagem enviada com sucesso.';
+        }
+        else{
+            return new Error('Error ao encontrar os dados do item e usuario')
+        }
+    }else{
+        return new Error('Error, informe o id do usuario')
+    }
 }

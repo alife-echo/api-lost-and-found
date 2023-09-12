@@ -25,6 +25,8 @@ routers.get('/filterCard',Auth.private,ItemControllers.filterCard)
 
 routers.get('/userlostItems/:userId',Auth.private,ItemControllers.getUserLostItems)
 
+routers.post('/sendMessage',ItemControllers.sendMessage)
+
 routers.get('/forum/:id',Auth.private,ItemControllers.getItem)
 
 routers.get('/listItemsResponses/:itemId',Auth.private,ItemControllers.listResponsesItemOfUser)

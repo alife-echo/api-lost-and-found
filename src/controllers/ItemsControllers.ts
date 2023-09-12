@@ -88,7 +88,7 @@ export const getUserLostItems = async(req:Request,res:Response) =>{
              res.status(400).json({error:hasLostItems.message})
         }
         else{
-            res.status(400).json({lostItems:hasLostItems})
+            res.status(200).json({lostItems:hasLostItems})
         }
     }else{
         res.status(400).json({error:'Informe o id do usuario'})
@@ -106,5 +106,20 @@ export const listResponsesItemOfUser  = async(req:Request,res:Response) =>{
      }
      else{
          return res.status(400).json({error:'Informe o id do item nos params'})
+     }
+}
+
+export const sendMessage = async(req:Request,res:Response) =>{
+     if(req.body.userId){
+            const createMessage = await itemService.sendMessageUser(req.body.userId)
+            if(createMessage instanceof Error){
+                res.status(400).json({error:createMessage.message})
+            }
+            else{
+                res.status(200).json({ok:createMessage})
+            }
+     }
+     else{
+        return res.status(400).json({error:'Informe o id do usuario'})
      }
 }
