@@ -31,5 +31,7 @@ routers.get('/forum/:id',Auth.private,ItemControllers.getItem)
 
 routers.get('/listItemsResponses/:itemId',Auth.private,ItemControllers.listResponsesItemOfUser)
 
+routers.get('/messagesLocation/:userId',Auth.private,ItemControllers.getLocationsUser)
+
 
 export default routers

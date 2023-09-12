@@ -123,3 +123,18 @@ export const sendMessage = async(req:Request,res:Response) =>{
         return res.status(400).json({error:'Informe o id do usuario'})
      }
 }
+
+export const getLocationsUser = async(req:Request,res:Response) =>{
+    if(req.params.userId){
+        const getLocations = await itemService.locationUser(req.params.userId)
+        if(getLocations instanceof Error){
+            res.status(400).json({error:getLocations.message})
+        }
+        else{
+            res.status(200).json({ok:getLocations})
+        }
+    }
+    else{
+        res.status(400).json({error:'Error informe o id do usuario'})
+    }
+}

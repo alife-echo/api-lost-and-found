@@ -161,3 +161,20 @@ export const  sendMessageUser = async(userId:string) =>{
         return new Error('Error, informe o id do usuario')
     }
 }
+
+export const locationUser = async(userId:string)=>{
+    if(userId){
+        const hasMessageUser = await prisma.message.findMany({where:{
+            userId:userId
+       }})
+       if(hasMessageUser.length > 0){
+            return hasMessageUser
+       }
+       else{
+           return new Error('Error ao encontrar mensagens do usuario')
+       }
+    }
+    else{
+       return new Error('Error infome o id do usuario')   
+    }
+}
