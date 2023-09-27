@@ -130,7 +130,7 @@ export const listReponsesOfItem = async(itemId:string) =>{ // listar respostas d
      }
 }
 
-export const  sendMessageUser = async(userId:string) =>{
+export const  sendMessageUser = async(userId:string) =>{ // mandar a mensagem para o usuario
     if(userId){
         const hasReponseItem = await prisma.itemResponse.findFirst({where:{userId}})
         const hasItem = await prisma.item.findFirst({where:{id:hasReponseItem?.itemId}})
@@ -162,7 +162,7 @@ export const  sendMessageUser = async(userId:string) =>{
     }
 }
 
-export const locationUser = async(userId:string)=>{
+export const locationUser = async(userId:string)=>{ //mostrar as mensagens de localização para o usuario
     if(userId){
         const hasMessageUser = await prisma.message.findMany({where:{
             userId:userId

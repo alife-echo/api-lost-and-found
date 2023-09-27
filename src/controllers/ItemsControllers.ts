@@ -3,9 +3,7 @@ import * as itemService from '../services/ItemService'
 import { ItemUploadData } from '../types/GlobalTypes';
 import { getUserRef } from '../helpers/getUserRef';
 import fs from 'fs'
-import  Jwt  from 'jsonwebtoken';
-import { Prisma } from '@prisma/client';
-import { error } from 'console';
+
 
 export const upload = async (req:Request,res:Response)=>{
     if(req.body.nameItem && req.body.littleDescription && req.body.questionsValidated && req.body.meetingLocation && req.file?.fieldname && req.body.idUser){

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import * as AuthController from '../controllers/AuthControllers'
+import cors from 'cors'
 import { Auth } from "../middlewares/Auth";
 const routers = Router()
 
@@ -13,5 +14,8 @@ routers.post('/confirm-email-post',AuthController.email_confirm)
 
 routers.post('/send-token-post',AuthController.sendEmailToken)
 
+
+
+  
 
 export default routers

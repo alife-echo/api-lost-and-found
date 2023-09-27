@@ -28,8 +28,10 @@
   "homepage": "https://github.com/alife-echo/api-lost-and-found#readme",
   "dependencies": {
     "@prisma/client": "^5.2.0",
+    "@types/cors": "^2.8.14",
     "@types/uuid": "^9.0.2",
     "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.1",
