@@ -10,6 +10,8 @@ routers.post('/register-post',AuthController.register)
 
 routers.post('/retrieve-post',AuthController.retrieve)
 
+routers.get('/validated-token',Auth.private,AuthController.validatedToken)
+
 routers.post('/confirm-email-post',AuthController.email_confirm)
 
 routers.post('/send-token-post',AuthController.sendEmailToken)

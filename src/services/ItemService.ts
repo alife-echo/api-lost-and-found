@@ -37,9 +37,10 @@ export const getListItem = async (token:string) =>{ // listar itens na home
      const userRef =  getUserRef(token,process.env.JWT_SECRET_KEY)
      const getListItems =  await prisma.item.findMany({where:{
          userId:{
+            /*
             not:{
                 equals:(await userRef).id
-            }
+            }*/
          }
      }})
 

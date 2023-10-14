@@ -10,19 +10,17 @@ export const login = async (req:Request,res:Response) =>{
     if(req.body.email && req.body.password) {
         let email: string = req.body.email;
         let password: string = req.body.password;
-        //console.log(password)
         const user = await UserService.findByEmail(email)
-        //console.log(user)
         if(user && UserService.matchPassword(password,user.password) && user.validated === 1) {
             const token = Jwt.sign({id:user.id,email:user.email},process.env.JWT_SECRET_KEY as string,{expiresIn:'1hr'})
-            res.status(200).json({ status: true,token });            
+            res.status(200).json({ status: true,token,id:user.id });            
         }
         else{
-            res.status(400).json({status:false,missingUser:'cannot find user'})
+            res.status(400).json({status:false,error:'usuario não encontrado'})
         }
     }
     else{
-        res.status(400).json({ status: false });
+        res.status(400).json({ status: false ,error:'Insira os dados corretamente'});
     }
 
 }
@@ -44,7 +42,7 @@ export const register = async (req:Request,res:Response) =>{
         }
     }
     else {
-        res.status(400).json({ error: 'E-mail e/ou senha e/ou nome não enviados.' });
+        res.status(400).json({ error: 'Insira os dados corretamente' });
     }
 }
 export const email_confirm = async (req:Request,res:Response) => {
@@ -64,14 +62,15 @@ export const email_confirm = async (req:Request,res:Response) => {
 }
 //2bs10
 export const sendEmailToken = async (req:Request,res:Response) =>{
-    if(req.body.email){
+    if(req.body.email){        
         const user = await UserService.findByEmail(req.body.email)
         if(user){
+            const token = Jwt.sign({id:user.id,email:user.email},process.env.JWT_SECRET_KEY as string,{expiresIn:'1hr'})
             sendEmail(user.email,res,'SEU TOKEN PARA ALTERAÇÃO',user.tokenRetrieve,'Alteração de senha')
-            res.status(200).json({ok:'Token enviado com sucesso'})
+            res.status(200).json({ok:'Token enviado com sucesso',token})
         }
         else{
-            res.status(400).json({error:'Error ao enviar token'})
+            res.status(400).json({error:'Usuario não encontrado'})
         }
         
     }else{
@@ -92,4 +91,6 @@ export const retrieve = async (req:Request,res:Response) =>{
         res.status(400).json({error:'Token e/ou senha não enviados.'})
       }
 }
-
+export const validatedToken = (req:Request,res:Response) =>{
+     res.status(200).json({status:true})
+}
