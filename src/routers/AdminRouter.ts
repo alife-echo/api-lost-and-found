@@ -6,4 +6,6 @@ const routers = Router()
 
 routers.get('/listUsers',Auth.private,AdminControllers.listUsers)
 
+routers.get('/judgment-items',Auth.private,Auth.private,AdminControllers.listItemsJudgment)
+
 export default routers

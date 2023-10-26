@@ -11,9 +11,9 @@ const server = express()
 server.use(express.urlencoded({extended:true}))
 server.use(express.static(path.join(__dirname,'../public')))
 const corsOptions = {
-     origin: 'http://localhost:3000', // A origem permitida
-     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Métodos permitidos
-     credentials: true, // Permite o envio de cookies junto com a requisição
+     origin: 'http://localhost:3000', 
+     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', 
+     credentials: true,
      optionsSuccessStatus: 200
    };
    
