@@ -21,7 +21,10 @@ model User {
   messages  Message[]
   tokenRetrieve String
 }
-
+model UserBanned {
+    id        String       @id @map("_id")
+    email     String    @unique
+}
 model Item {
   id                String             @id @map("_id")
   nameItem          String

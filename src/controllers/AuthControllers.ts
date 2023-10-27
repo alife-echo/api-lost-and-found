@@ -1,5 +1,6 @@
 import express,{Request,Response} from 'express'
 import * as UserService from '../services/UserService'
+import * as AdminService from '../services/AdminService'
 import  Jwt  from 'jsonwebtoken';
 import { Prisma } from '@prisma/client';
 import { sendEmail } from '../helpers/sendEmail';
@@ -11,7 +12,8 @@ export const login = async (req:Request,res:Response) =>{
         let email: string = req.body.email;
         let password: string = req.body.password;
         const user = await UserService.findByEmail(email)
-        if(user && UserService.matchPassword(password,user.password) && user.validated === 1) {
+        const userBanned = await AdminService.findByEmailBanned(email)
+        if(userBanned && user && UserService.matchPassword(password,user.password) && user.validated === 1) {
             const token = Jwt.sign({id:user.id,email:user.email},process.env.JWT_SECRET_KEY as string,{expiresIn:'1hr'})
             res.status(200).json({ status: true,token,id:user.id });            
         }
@@ -28,8 +30,12 @@ export const register = async (req:Request,res:Response) =>{
     if(req.body.name && req.body.email && req.body.password) {
         let {name, email, password  } = req.body;
         const hasUser = await UserService.findByEmail(email)
+        const userBanned = await AdminService.findByEmailBanned(email)
         if(hasUser){
             res.status(409).json({error:'Email ja existe'})
+        }
+        else if(userBanned === false){
+            res.status(409).json({error:'Esse usuário foi banido!'})
         }
         else if (!hasUser && validateEmail(email)) {
             const newUser= await UserService.createUser(name,email,password) as Prisma.UserCreateInput
@@ -64,10 +70,14 @@ export const email_confirm = async (req:Request,res:Response) => {
 export const sendEmailToken = async (req:Request,res:Response) =>{
     if(req.body.email){        
         const user = await UserService.findByEmail(req.body.email)
+        const userBanned = await AdminService.findByEmailBanned(req.body.email)
         if(user){
             const token = Jwt.sign({id:user.id,email:user.email},process.env.JWT_SECRET_KEY as string,{expiresIn:'1hr'})
             sendEmail(user.email,res,'SEU TOKEN PARA ALTERAÇÃO',user.tokenRetrieve,'Alteração de senha')
             res.status(200).json({ok:'Token enviado com sucesso',token})
+        }
+        else if(userBanned === false){
+            res.status(409).json({error:'Esse usuário foi banido!'})
         }
         else{
             res.status(400).json({error:'Usuario não encontrado'})
