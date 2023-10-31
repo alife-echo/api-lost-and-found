@@ -6,6 +6,8 @@ import AuthItem from './routers/AuthItem'
 import AdminRouter from './routers/AdminRouter'
 import cors from 'cors'
 import { MulterError } from "multer";
+import swaggerUi from 'swagger-ui-express'
+import swaggerDocs from './swagger.json'
 dotenv.config()
 const server = express()
 
@@ -22,6 +24,8 @@ server.use(cors(corsOptions));
 server.use(AuhtRouter)
 server.use(AuthItem)
 server.use(AdminRouter)
+
+server.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs))
 
 server.use((req:Request,res:Response,next:NextFunction)=>{
      res.json({error:'endpoint não encontrado'}).status(404)

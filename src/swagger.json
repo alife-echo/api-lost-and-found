@@ -1,0 +1,36 @@
+{
+    "openapi" : "3.0.0",
+    "info" : {
+        "title" : "API de Achados e Perdidos",
+        "description" : "Essa API tem como objetivo receber os dados de um objeto que foi perdido e fazer com que esse objeto retorne ao dono que perdeu",
+        "termsOfService" : "https://sale.aliexpress.com/pt/__pc/MF06DxusiL.htm?spm=a2g03.9316745.sb99689.2.45a7B2tnB2tniX",
+        "contact" : {
+            "email" : "projetosap@gmail.com"
+        },
+        "version":"1.0.0"
+    },
+    "patch" : {
+        "/post-login":{
+           "post" : {
+            "summary":"login",
+            "description": "Essa rota será responsavel por fazer o login do usuario",
+            "tags" : ["Usuario"],
+            "requestBody":{
+                "content" : {
+                    "application/x-www-form-urlencoded":{
+                        "examples":{
+                            "login":{
+                                "value":{
+                                    "email":"gabriel.britos@unifesspa.edu.br",
+                                    "password":"123456"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            }
+        }
+    
+    }
+}
