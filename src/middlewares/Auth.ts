@@ -21,7 +21,6 @@ export const Auth = {
                         success = true;
                     
                 } catch (err) {
-                    console.log(err)
                 }
             }
         }
@@ -49,7 +48,6 @@ export const Auth = {
                         return;
                     }
                 } catch (err) {
-                    console.log(err)
                 }
             }
         }

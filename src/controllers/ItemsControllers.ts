@@ -1,6 +1,8 @@
 import express,{Request,Response} from 'express'
 import * as itemService from '../services/ItemService'
 import { ItemUploadData } from '../types/GlobalTypes';
+import * as AdminService from '../services/AdminService'
+
 import { getUserRef } from '../helpers/getUserRef';
 import fs from 'fs'
 
@@ -134,5 +136,15 @@ export const getLocationsUser = async(req:Request,res:Response) =>{
     }
     else{
         res.status(400).json({error:'Error informe o id do usuario'})
+    }
+}
+
+export const deleteItem = async(req:Request,res:Response)=>{
+    const destroyedItem = await AdminService.deleteItem(req.params.id)
+    if(destroyedItem instanceof Error){
+           res.json({error:destroyedItem.message}).status(400)
+    }
+    else{
+           res.json({ok:destroyedItem}).status(200)
     }
 }

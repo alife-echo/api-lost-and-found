@@ -179,3 +179,4 @@ export const locationUser = async(userId:string)=>{ //mostrar as mensagens de lo
        return new Error('Error infome o id do usuario')   
     }
 }
+

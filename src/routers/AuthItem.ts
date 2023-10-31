@@ -25,6 +25,8 @@ routers.get('/filterCard',Auth.private,ItemControllers.filterCard)
 
 routers.post('/sendMessage',ItemControllers.sendMessage)
 
+routers.delete('/delete-item/:id',Auth.private,ItemControllers.deleteItem)
+
 
 routers.get('/userlostItems/:userId',Auth.private,ItemControllers.getUserLostItems)
 

@@ -5,6 +5,7 @@ import AuhtRouter from './routers/AuthRouter'
 import AuthItem from './routers/AuthItem'
 import AdminRouter from './routers/AdminRouter'
 import cors from 'cors'
+import { MulterError } from "multer";
 dotenv.config()
 const server = express()
 
@@ -25,10 +26,13 @@ server.use(AdminRouter)
 server.use((req:Request,res:Response,next:NextFunction)=>{
      res.json({error:'endpoint não encontrado'}).status(404)
 })
-const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
-     res.status(400); // Bad Request
-     console.log(err);
-     res.json({ error: 'Ocorreu algum erro.' });
+const errorHandler: ErrorRequestHandler = (err:Error, req:Request, res:Response, next:NextFunction) => {
+    if(err instanceof MulterError){
+          res.json({error:err.code,errorField:err.field,errorMessage:err.message}).status(400)
+    }
+    else{
+     res.json({error:'Error ao enviar imagem'}).status(400)
+    }
  }
  server.use(errorHandler);
 server.listen(process.env.PORT)
