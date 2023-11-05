@@ -37,11 +37,24 @@ export const upload = async (req:Request,res:Response)=>{
 
 export const getListItems = async (req:Request,res:Response) =>{
      const token:string = req.query.token as string
-     res.status(200).json({items:await itemService.getListItem(token)})
+     if(!token){
+        res.json({error:'Token não existe'}).status(400)
+     }
+     const items = await itemService.getListItem(token)
+     if(items instanceof Error){
+        res.json({error:items.message})
+     }
+     else{
+        res.status(200).json({items:items})
+     }
+     
 }
 
 export const getItem = async (req:Request,res:Response) =>{
      const id:string = req.params.id as string
+     if(!id){
+        res.json({error:'Não existem item'}).status(400)
+     }
      const hasItem = await itemService.getItemID(id)
      if(hasItem instanceof Error){
          res.status(400).json({error:hasItem.message})

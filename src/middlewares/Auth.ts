@@ -43,6 +43,9 @@ export const Auth = {
                         process.env.JWT_SECRET_KEY as string
                     );
                     const userRef = await getUserRef(token, process.env.JWT_SECRET_KEY)
+                    if (userRef instanceof Error) {
+                        return userRef;
+                      }
                     if (userRef.email === 'alife.silva@unifesspa.edu.br' || userRef.email === 'gabriel.britos@unifesspa.edu.br') {
                         next();
                         return;

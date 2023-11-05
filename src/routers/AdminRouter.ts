@@ -4,7 +4,6 @@ import * as AdminControllers from '../controllers/AdminControllers'
 
 const routers = Router()
 
-routers.get('/listUsers',Auth.admin,AdminControllers.listUsers)
 
 routers.get('/judgment-items',Auth.admin,AdminControllers.listItemsJudgment)
 

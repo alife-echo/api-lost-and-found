@@ -34,13 +34,19 @@ export const uploadItem = async (item:ItemUploadData) => {
 }
 
 export const getListItem = async (token:string) =>{ // listar itens na home
-     const userRef =  getUserRef(token,process.env.JWT_SECRET_KEY)
+     const userRef = await getUserRef(token,process.env.JWT_SECRET_KEY)
+     if(!userRef){
+        return new Error('Usuário não encontrado')
+     }
+     if (userRef instanceof Error) {
+        return userRef;
+      }
      const getListItems =  await prisma.item.findMany({where:{
          userId:{
-            /*
+
             not:{
-                equals:(await userRef).id
-            }*/
+                equals:userRef.id || ''
+            }
          }
      }})
 
@@ -49,16 +55,23 @@ export const getListItem = async (token:string) =>{ // listar itens na home
 export const getItemID = async (id:string) => { // mostrar o item no forum
     const item = await prisma.item.findUnique({where:{id}})
     const getResponses = await prisma.itemResponse.findMany({where:{itemId:id}})
-    if(item){
-       return {item,getResponses}
+    if(!item){
+       return new Error('Error ao encontrar item ')
     }
     else {
-        return new Error('Error ao encontrar item ')
+        return {item,getResponses}
     }
 }
 
 export const sendReponseItem = async (txtResponse:string,token:string,idItem:string) =>{ // responder o item no forum
     const userRef = await getUserRef(token,process.env.JWT_SECRET_KEY)
+    const item = await prisma.item.findUnique({where:{id:idItem}})
+    if(!item){
+        return new Error('Error ao encontrar item')
+     }
+    if (userRef instanceof Error) {
+        return userRef;
+      }
     let responseItemStruct:Prisma.ItemResponseCreateInput
     responseItemStruct = {
         id:uuidv4(),
@@ -118,12 +131,12 @@ export const listLostItem = async(userId:string) => { // listar itens publicado 
 export const listReponsesOfItem = async(itemId:string) =>{ // listar respostas daquele item
      if(itemId){
         const hasResponseItem = await prisma.itemResponse.findMany({where:{itemId}})
-        const hasUserResponseItem = await prisma.user.findMany({where:{id:hasResponseItem[0].userId}})
+        if(!hasResponseItem || hasResponseItem.length<=0){
+                return new Error('Error ao listar respostas e usuarios do item')
+        }
+        const hasUserResponseItem = await prisma.user.findMany({where: {id: hasResponseItem[0].userId},select: {email: true,name: true}})
         if(hasResponseItem && hasResponseItem){
             return {hasResponseItem,hasUserResponseItem}
-        }
-        else{
-            return new Error('error ao listar respostas e usuarios do item')
         }
      }
      else{
