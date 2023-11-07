@@ -6,7 +6,6 @@ import AuthItem from './routers/AuthItem'
 import AdminRouter from './routers/AdminRouter'
 import cors from 'cors'
 import { MulterError } from "multer";
-import swaggerUi from 'swagger-ui-express'
 dotenv.config()
 const server = express()
 

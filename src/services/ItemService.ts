@@ -144,26 +144,27 @@ export const listReponsesOfItem = async(itemId:string) =>{ // listar respostas d
      }
 }
 
-export const  sendMessageUser = async(userId:string) =>{ // mandar a mensagem para o usuario
-    if(userId){
-        const hasReponseItem = await prisma.itemResponse.findFirst({where:{userId}})
-        const hasItem = await prisma.item.findFirst({where:{id:hasReponseItem?.itemId}})
-        const hasUser = await prisma.user.findFirst({where:{id:hasReponseItem?.userId}})
-        if(hasReponseItem && hasItem && hasUser){
+export const  sendMessageUser = async(userId:string,itemId:string) =>{ // mandar a mensagem para o usuario
+    if(userId && itemId){
+        const hasReponseItem = await prisma.itemResponse.findFirst({where:{userId,itemId}})
+        const item = await prisma.item.findFirst({ where: { id: hasReponseItem?.itemId } })
+        const user = await  prisma.user.findFirst({ where: { id: item?.userId} })
+        
+        if(hasReponseItem && item && user){
             let messageStruct : Prisma.MessageCreateInput
             messageStruct = {
                 id:uuidv4(),
                 date:getDateNow(),
                 time:getHoursAndMinutesNow(),
-                meetingLocation:hasItem.meetingLocation,
-                userSend:hasUser.name,
+                meetingLocation:item.meetingLocation || '',
+                userSend:user.name || '',
                 user:{
-                    connect:{id:hasReponseItem.userId}
+                    connect:{id:hasReponseItem?.userId}
                 },
             }
             await prisma.$transaction([
                 prisma.message.create({ data: messageStruct }),
-                prisma.item.delete({ where: { id: hasItem.id } }),
+                prisma.item.delete({ where: { id: item.id } }),
             ]);
 
             return 'Mensagem enviada com sucesso.';

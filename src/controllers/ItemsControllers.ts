@@ -123,8 +123,8 @@ export const listResponsesItemOfUser  = async(req:Request,res:Response) =>{
 }
 
 export const sendMessage = async(req:Request,res:Response) =>{
-     if(req.body.userId){
-            const createMessage = await itemService.sendMessageUser(req.body.userId)
+     if(req.body.userId && req.body.itemId){
+            const createMessage = await itemService.sendMessageUser(req.body.userId,req.body.itemId)
             if(createMessage instanceof Error){
                 res.status(400).json({error:createMessage.message})
             }
