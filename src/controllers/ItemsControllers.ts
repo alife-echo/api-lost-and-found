@@ -38,7 +38,7 @@ export const upload = async (req:Request,res:Response)=>{
 export const getListItems = async (req:Request,res:Response) =>{
      const token:string = req.query.token as string
      if(!token){
-        res.json({error:'Token não existe'}).status(400)
+        res.status(400).json({error:'Token não existe'})
      }
      const items = await itemService.getListItem(token)
      if(items instanceof Error){
@@ -53,7 +53,7 @@ export const getListItems = async (req:Request,res:Response) =>{
 export const getItem = async (req:Request,res:Response) =>{
      const id:string = req.params.id as string
      if(!id){
-        res.json({error:'Não existem item'}).status(400)
+        res.status(400).json({error:'Não existem item'})
      }
      const hasItem = await itemService.getItemID(id)
      if(hasItem instanceof Error){
@@ -68,14 +68,14 @@ export const responseItem = async (req:Request,res:Response) =>{
         if(req.body.textResponse && req.body.token && req.body.idItem){
             const hasResponseItem = await itemService.sendReponseItem(req.body.textResponse,req.body.token,req.body.idItem)
             if(hasResponseItem instanceof Error){
-                res.json({error:hasResponseItem.message})
+                res.status(400).json({error:hasResponseItem.message})
             }
             else{
-                res.json({ok:'resposta enviada com sucesso'})
+                res.status(200).json({ok:'resposta enviada com sucesso'})
             }
         }
         else{
-            res.json({error:'Informe os dados corretamente'})
+            res.status(400).json({error:'Informe os dados corretamente'})
         }
 }
 

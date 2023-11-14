@@ -42,6 +42,7 @@ model ItemResponse {
   textResponse String
   date         String
   time         String
+  useRes       String
   itemId       String
   userId       String
   item         Item       @relation(fields: [itemId], references: [id],onDelete:Cascade)

@@ -43,10 +43,10 @@ export const getListItem = async (token:string) =>{ // listar itens na home
       }
      const getListItems =  await prisma.item.findMany({where:{
          userId:{
-
+            /*
             not:{
                 equals:userRef.id || ''
-            }
+            }*/
          }
      }})
 
@@ -78,6 +78,7 @@ export const sendReponseItem = async (txtResponse:string,token:string,idItem:str
         textResponse:txtResponse,
         date:getDateNow(),
         time:getHoursAndMinutesNow(),
+        useRes:userRef.name || '',
         user:{
             connect:{id:userRef.id}
         },
