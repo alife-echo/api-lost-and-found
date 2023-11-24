@@ -187,7 +187,7 @@ export const locationUser = async(userId:string)=>{ //mostrar as mensagens de lo
             return hasMessageUser
        }
        else{
-           return new Error('Error ao encontrar mensagens do usuario')
+           return new Error('Usuário não possu mensagens no momento')
        }
     }
     else{
