@@ -11,6 +11,7 @@ dotenv.config()
 
 const prisma = new PrismaClient()
 
+
 export const uploadItem = async (item:ItemUploadData) => {
     if(areAllPropertiesFilled(item)){
         let itemStruct:Prisma.ItemCreateInput

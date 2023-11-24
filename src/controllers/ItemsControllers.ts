@@ -2,33 +2,56 @@ import express,{Request,Response} from 'express'
 import * as itemService from '../services/ItemService'
 import { ItemUploadData } from '../types/GlobalTypes';
 import * as AdminService from '../services/AdminService'
+import {initializeApp} from 'firebase/app'
+import {getStorage,ref,getDownloadURL,uploadBytesResumable} from 'firebase/storage'
+import config from '../config/firebase.config'
 
 import { getUserRef } from '../helpers/getUserRef';
 import fs from 'fs'
+import multer from 'multer';
+import { getHoursAndMinutesNow } from '../helpers/getHoursAndMinutesNow';
+import { getDateNow } from '../helpers/getDateNow';
+
+initializeApp(config.firebaseConfig)
+
+const storage = getStorage()
 
 
 export const upload = async (req:Request,res:Response)=>{
     if(req.body.nameItem && req.body.littleDescription && req.body.questionsValidated && req.body.meetingLocation && req.file?.fieldname && req.body.idUser){
         
-        const imagePath = req.file.path;
-        const imageBase64 = fs.readFileSync(imagePath, 'base64');
-        
-        const itemData:ItemUploadData = {
-            name: req.body.nameItem,
-            littleDescription: req.body.littleDescription,
-            questionsValidated: req.body.questionsValidated,
-            meetingLocation: req.body.meetingLocation,
-            image: imageBase64, 
-            userId:req.body.idUser
-          };
-        const item = await itemService.uploadItem(itemData)
-        fs.unlinkSync(imagePath)
-        if(item instanceof Error){
-            res.status(400).json({error:item.message})
-        }
-        else{
-            res.status(200).json({ok:'Upload realizado com sucesso'})
-        }
+        try {
+                const dateTime = `${getDateNow()} - ${getHoursAndMinutesNow()}` 
+                const storageRef = ref(storage,`files/${req.file.originalname + "     " + dateTime}`)
+                const metadata = {
+                    contentType:req.file.mimetype
+                }
+                const snapshot = await uploadBytesResumable(storageRef,req.file.buffer,metadata)
+                const downloadURL = await getDownloadURL(snapshot.ref)
+                const itemData:ItemUploadData = {
+                    name: req.body.nameItem,
+                    littleDescription: req.body.littleDescription,
+                    questionsValidated: req.body.questionsValidated,
+                    meetingLocation: req.body.meetingLocation,
+                    image: downloadURL, 
+                    userId:req.body.idUser
+                  };
+                  
+                const item = await itemService.uploadItem(itemData)
+                if(item instanceof Error){
+                    res.status(400).json({error:item.message})
+                }
+                
+                else{
+                    res.status(200).json({ok:'Upload realizado com sucesso'})
+                }
+          
+            }
+        catch(error){
+            console.log(error)
+            return res.status(400).json({error:'Error ao enviar imagem'})
+        }        
+       
     }
     else{
         res.json({error:'Informe os dados corretamente'})

@@ -7,6 +7,7 @@ const routers = Router()
 
 const upload = multer({
     dest:'./tmp',
+    storage:multer.memoryStorage(),
     fileFilter:(req,file,cb)=>{
         const allowed:string[] = ['image/jpg','image/jpeg','image/png']
         cb(null,allowed.includes(file.mimetype))
